@@ -32,7 +32,6 @@ This project focuses on collecting, processing, and analyzing Euroleague basketb
 
 ## 🧩 What's Next?
 
-- Finish transforming player time played (`MM:SS` → minutes as float)
 - Store cleaned datasets in SQL or CSV for further analysis
 - Perform player segmentation and ranking
 - Visualize key metrics using matplotlib/seaborn
