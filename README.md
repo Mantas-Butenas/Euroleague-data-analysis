@@ -17,14 +17,12 @@ This project focuses on collecting, processing, and analyzing Euroleague basketb
 .
 ├── Euroleague.ipynb        # Main notebook with EDA and cleaning
 ├── main.py                 # Deprecated - initial CSV loader
-├── update_data.py          # API data fetcher (legacy)
-├── archive/                # Contains old scripts, not currently used
 ├── .gitignore              # Ignores CSVs, venv, and cache files
 ```
 
 ## 🚀 Technologies Used
 
-- Python (Pandas, Requests, NumPy)
+- Python (Pandas, Requests)
 - Jupyter Notebook
 - Git & GitHub
 - API Integration
