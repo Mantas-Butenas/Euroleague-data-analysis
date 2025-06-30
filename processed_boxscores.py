@@ -3,14 +3,19 @@ import json
 import pandas as pd
 import numpy as np
 from sqlalchemy import create_engine
+from dotenv import load_dotenv
 
 # --- CONFIGURATION ---
 DATA_DIR = r"C:\Users\Mantas\Desktop\AI\python projektai\Euroleague\data"
 BOX_PATH = lambda season: os.path.join(DATA_DIR, season, "BoxScore")
 HEADER_PATH = lambda season: os.path.join(DATA_DIR, season, "Header")
 SEASONS = ['E2021', 'E2022', 'E2023', 'E2024']
+load_dotenv('sql_connector.env')
+db_host = os.getenv("DB_HOST")
+db_user = os.getenv("DB_USER")
+db_pass = os.getenv("DB_PASSWORD")
 
-DB_URI = "mysql+pymysql://root:0338Monteur0494@127.0.0.1:3306/euroleague"
+DB_URI = f'mysql+pymysql://{db_user}:{db_pass}@{db_host}:{3306}/euroleague'
 TABLE_NAME = "euroleague_boxscores"
 
 
@@ -151,7 +156,7 @@ def calculate_advanced_stats(df):
             2 * (df['FieldGoalsAttempted2'] + df['FieldGoalsAttempted3'] + 0.44 * df['FreeThrowsAttempted'])
     ).replace(0, np.nan)
 
-    df['Usage'] = 100 * (
+    df['UsageRate'] = 100 * (
             (df['FieldGoalsAttempted2'] + df['FieldGoalsAttempted3'] +
              0.44 * df['FreeThrowsAttempted'] + df['Turnovers']) /
             (df['Minutes'] * 5).replace(0, np.nan)
@@ -169,6 +174,9 @@ def add_round_and_opponent(df, headers):
     )
     return merged.drop(columns=['TeamA', 'TeamB'])
 
+def calculate_scoring_system(df):
+    df['ScoringSystemAdvantage']=df['FantasyPoints']-df['Valuation']
+    return df
 
 def upload_to_sql(df, engine):
     existing = pd.read_sql(f"SELECT SeasonCode, GameCode, Player_ID FROM {TABLE_NAME}", engine)
@@ -198,7 +206,7 @@ def main():
     df_final['IsPlaying'] = df_final['IsPlaying'].astype(bool)
     df_final['IsStarter'] = df_final['IsStarter'].astype(bool)
     df_final['TeamWin'] = df_final['TeamWin'].astype(bool)
-
+    calculate_scoring_system(df_final)
     engine = create_engine(DB_URI)
     upload_to_sql(df_final, engine)
     print("✅ Data upload complete.")

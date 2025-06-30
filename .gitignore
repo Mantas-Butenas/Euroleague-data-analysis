@@ -3,3 +3,5 @@ __pycache__/
 /data/
 *.csv
 .ipynb_checkpoints/
+sql_integration.txt
+/sql_connector.env
